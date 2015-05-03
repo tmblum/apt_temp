@@ -1,6 +1,7 @@
 import os
 import glob
 import time
+import requests
 
 os.system('modprobe w1-gpio')
 os.system('modprobe w1-therm')
@@ -23,10 +24,10 @@ def read_temp():
     equals_pos = lines[1].find('t=')
     if equals_pos != -1:
         temp_string = lines[1][equals_pos+2:]
-        temp_c = float(temp_string)/1000.0
-        temp_f = temp_c*9.0/5.0 +32.0
-        return temp_c, temp_f
+        temp_c = float(temp_string)
+        return temp_c
 
 while True:
     print(read_temp())
-    time.sleep(1)
+    requests.post('https://pacific-sea-4341.herokuapp.com/readings', json={'reading':{'temp_c':read_temp()}})
+    time.sleep(300)
